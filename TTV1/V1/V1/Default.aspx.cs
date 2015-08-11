@@ -43,7 +43,8 @@ namespace V1
             //ищем стобцец в списке 
             foreach (string col in columnslist) 
             {
-                if (col == name)
+                //избавляемся от очепяток с буквами 
+                if (col.ToUpper() == name.ToUpper())
                 {
                     find = false;
                     break;
@@ -62,10 +63,60 @@ namespace V1
             
         }
 
-       
+        //стобцы как будем их  дергать из АД
+        string[] TableCollumns = 
+        {
+             "displayname", "title",    "userprincipalname",   "telephonenumber","company"
+        };
+        string[] RusName =
+        { 
+               "ФИО",      "Должность",   "Почта",               "телефон","офис"
+        };
+
+        struct DataRoWDescript
+        {
+            public string TableCollumn, TableName;
+        };
+
+         DataRoWDescript[] MyData;
+
+        void loadMyData() 
+        {
+            int countHead= TableCollumns.Length;
+            MyData = new DataRoWDescript[countHead];
+            //загружаем данные о столбцах в структуру 
+            for (int I = 0; I < countHead; I++) 
+            {
+                MyData[I].TableName = RusName[I];
+                MyData[I].TableCollumn = TableCollumns[I];
+            }
+
+        }
+        //список офисов 
+        protected List<string> OfficeList = new List<string>();
+
+        protected void AddListOffice(string Name) 
+        {
+            bool find = true;
+            foreach (string txt in OfficeList) 
+            {
+                if (txt == Name)
+                {
+                    find = false;
+                    break;
+                }
+            }
+            if (find) OfficeList.Add(Name);
+        }
 
         protected void GetADInfo()
         {
+            //создаем структуру со списком столбцов
+            loadMyData();
+
+            
+
+
             /*ссылка на АД в котороу будем искать */
             DirectoryEntry AD = new DirectoryEntry();
             /*запрос в АД */
@@ -76,29 +127,36 @@ namespace V1
             searchInAD.PageSize = 1001;
             //находим всех пользователей
             SearchResultCollection results = searchInAD.FindAll();
+            //создаем таблцу
+            foreach (DataRoWDescript N in MyData ) CreateCollumns(N.TableName);
+            
 
-            /*читаем результат запроса */
+
             foreach (SearchResult searchResult in results)
             {
-                //A= searchResult.Properties["name"][0] as string;
-                ResultPropertyCollection S = searchResult.Properties;
-                //заполняем колонки если таких нет в таблице
-                foreach (DictionaryEntry PropertyNames in S) ADD(PropertyNames.Key.ToString());
-                //заполняем значениями стобцы
                 
-            }
-
-            foreach (SearchResult searchResult in results)
-            {
-                //A= searchResult.Properties["name"][0] as string;
-                ResultPropertyCollection S = searchResult.Properties;
-                //заполняем колонки если таких нет в таблице
                 DataRow MyRow = UsersInfo.NewRow();
-                foreach (DictionaryEntry PropertyNames in S)
-                    MyRow[PropertyNames.Key.ToString()] = Convert.ToString(searchResult.Properties[PropertyNames.Key.ToString()][0]);
-                UsersInfo.Rows.Add(MyRow);
-            }
+                foreach (DataRoWDescript N in MyData)
+                {
+                    try
+                    {
+                        MyRow[N.TableName ] = Convert.ToString(searchResult.Properties[N.TableCollumn][0]);
+                    }
+                    catch 
+                    {
+ 
+                    }
+                    
+                };
+                string Office = MyRow["офис"].ToString();
 
+                if ((Office != "") && (Office != @"Агентство ""Практика"""))
+                {
+                    UsersInfo.Rows.Add(MyRow);
+                    //добавляем в список для фильтра 
+                    AddListOffice(Office);
+                }
+            }
         
         }
 
@@ -107,13 +165,56 @@ namespace V1
             //выполняем загрузку данных 1 раз 
             if (!IsPostBack)
             {
+
+                Page A = (Page)sender;
+
+               
+                Label LabelUser = new Label()
+                {
+                    Text =" Добро пожаловать :"
+                };
+
+
+                Label UserName = new Label()
+                {
+                    Text = A.User.Identity.Name
+                };
+                
+                
+
                 GetADInfo();
+                Label NameFiltr = new Label()
+                {
+                    Text = " Выбрать офис "
+                };
+
+                DropDownList ListFiltr = new DropDownList();
+                ListFiltr.Items.Add("");
+
+                foreach (string N in OfficeList) 
+                {
+                    ListFiltr.Items.Add(N);
+                }
+                
+
+              
+
+                //DataRow[] Sort = UsersInfo.Select("офис<>''");
+
 
                 DataView ShowDataInWeb = new DataView(UsersInfo);
                 //грузим всю гадость на страницу потом отсеим че не нада 
                 MyGrid.DataSource = ShowDataInWeb;
                 //загружаем данные в таблицу
                 MyGrid.DataBind();
+
+                MyGrid.BorderStyle = BorderStyle.Solid;
+
+                //добавляем таблицу на экран 
+                form1.Controls.Add(LabelUser);
+                form1.Controls.Add(UserName);
+                //добавляем таблицу на экран 
+                //form1.Controls.Add(ListFiltr);
                 //добавляем таблицу на экран 
                 this.Controls.Add(MyGrid);
             }
@@ -124,3 +225,29 @@ namespace V1
         }
     }
 }
+
+
+/*читаем результат запроса 
+          foreach (SearchResult searchResult in results)
+          {
+              //A= searchResult.Properties["name"][0] as string;
+              ResultPropertyCollection S = searchResult.Properties;
+              //заполняем колонки если таких нет в таблице
+              foreach (DictionaryEntry PropertyNames in S) ADD(PropertyNames.Key.ToString());
+              //заполняем значениями стобцы
+                
+          }
+
+
+
+          foreach (SearchResult searchResult in results)
+          {
+              //A= searchResult.Properties["name"][0] as string;
+              ResultPropertyCollection S = searchResult.Properties;
+              //заполняем колонки если таких нет в таблице
+              DataRow MyRow = UsersInfo.NewRow();
+              foreach (DictionaryEntry PropertyNames in S)
+                  MyRow[PropertyNames.Key.ToString()] = Convert.ToString(searchResult.Properties[PropertyNames.Key.ToString()][0]);
+              UsersInfo.Rows.Add(MyRow);
+          }
+          */
