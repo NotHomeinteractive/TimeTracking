@@ -22,15 +22,40 @@ namespace ServiceConsole
 
         static void Main(string[] args)
         {
-            //задаем путь к директории куда будет сохраняться файл с информацией из АД
-            MyXMLTable.PatchDir = ".";
+
+
+           // MyConfig.AddParam("ConfigFilePutch", ".");
+           // MyConfig.AddParam("Period_V_minutah", "1");
+            string Dir = MyConfig.GetParam("ConfigFilePutch");
+            if (Dir == "") 
+            {
+                //ругаемся в лог потом 
+                Dir = ".";
+            }
+
+            //путь к файлу конфигурации 
+            MyConfig.DirPatchFile = Dir;
             //находим все данные по пользователях 
             MyADinformer.GetAdUserInfo();
             //получаем сведения о пользователях
             DataTable AD = MyADinformer.ADSearchResult;
+           
+            Dir = MyConfig.GetParam("FilePutch");
+            if (Dir == "")
+            {
+                //ругаемся в лог потом 
+                Dir = ".";
+            }
+
+            //задаем путь к директории куда будет сохраняться файл с информацией из АД
+            MyXMLTable.PatchDir = Dir;
             //сохраняем данные в XML 
             MyXMLTable.SaveDataTableInXML(AD);
 
+
+            
+
+           
             int A = 0;
         }
     }

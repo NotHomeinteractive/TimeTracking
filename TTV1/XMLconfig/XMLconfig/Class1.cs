@@ -114,6 +114,8 @@ namespace XMLconfig
 
         public string GetParam(string NameParams)
         {
+            //перед добавлением проверим что там уже что то есть 
+            loadParam();
             //получаем номер параметра 
             int Index_ = MyParams.GetIndex(NameParams);
             //сохранять будем значения тут 
