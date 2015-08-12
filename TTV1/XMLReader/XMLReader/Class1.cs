@@ -41,7 +41,7 @@ namespace XMLReader
                 StringWriter writerXML = new StringWriter();
                 //получаем данные о таблице и преобразуем их в XML формат 
                 TableForSave.WriteXml(writerXML, XmlWriteMode.WriteSchema, true);
-                //Сохраняем преобразованные в XML данные в файл
+               //Сохраняем преобразованные в XML данные в файл
                 File.WriteAllText(Name, writerXML.ToString());
             }
         }
