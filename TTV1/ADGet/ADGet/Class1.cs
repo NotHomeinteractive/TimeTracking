@@ -18,6 +18,8 @@ namespace ADGet
         //получаем данные о всех пользователях 
         public void GetAdUserInfo()
         {
+            //пересоздаем таблицу чтобы она не добавляла записи а обновляла их 
+            ADSearchResult = new DataTable("AD");
             BeginSerch = true;
             /*ссылка на АД в котороу будем искать */
             DirectoryEntry AD = new DirectoryEntry();

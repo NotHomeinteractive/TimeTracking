@@ -55,6 +55,8 @@ namespace ServiceConsole
                 MyADinformer.GetAdUserInfo();
                 //получаем сведения о пользователях
                 DataTable AD = MyADinformer.ADSearchResult;
+
+                Console.WriteLine("записано " + AD.Rows.Count);
                 //куда сохраняеться информация об АД 
                 Dir = MyConfig.GetParam("FilePutch");
                 if (Dir == "")
