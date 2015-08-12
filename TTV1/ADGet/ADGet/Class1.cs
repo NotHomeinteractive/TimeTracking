@@ -13,7 +13,7 @@ namespace ADGet
     public class ADEngine
     {
         //сохраняем данные в этой таблице 
-        public DataTable ADSearchResult = new DataTable();
+        public DataTable ADSearchResult = new DataTable("AD");
         public bool BeginSerch = false;
         //получаем данные о всех пользователях 
         public void GetAdUserInfo()
