@@ -12,6 +12,7 @@ namespace SessionLess
     {
         static void Main(string[] args)
         {
+            
             //while(true)
             //{
 
@@ -21,8 +22,8 @@ namespace SessionLess
 
                 string Hostname = Environment.MachineName;
 
-            //    Console.Clear();
-            //    Console.WriteLine(" user " + Username + " host " + Hostname);
+                Console.Clear();
+                Console.WriteLine(" user " + Username + " host " + Hostname);
                 
             //    //File.WriteAllText("log.txt",Username);
 
