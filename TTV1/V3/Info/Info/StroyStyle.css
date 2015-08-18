@@ -6,9 +6,9 @@ PhoneTable
     
      width:100%
     } 
-        
+     
     TH {
-    background: #fc0; /* Цвет фона ячейки */
+    background: #DFDFDF; /* Цвет фона ячейки */
     height: 40px; /* Высота ячеек */
     vertical-align: bottom; /* Выравнивание по нижнему краю */
     padding: 0; /* Убираем поля вокруг текста */

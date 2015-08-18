@@ -19,69 +19,49 @@ namespace Info
     public partial class _Default : System.Web.UI.Page
     {
 
-        protected DataTable CreateTable(DataRow[] Row )
+        protected string CreateTable(DataRow[] Row )
         {
-            /*создаем таблицу *******************************************************/
-            //телефонный справочник 
-            DataTable A = new DataTable("Telephone_dictyonary");
-            //name 
-            DataColumn Col = new DataColumn()
-            {
-                ColumnName = "ФИО",
-                DataType   = System.Type.GetType("System.String")
-            };
-            A.Columns.Add(Col);
-            
-            //title
-            Col = new DataColumn()
-            {
-                ColumnName = "Должность",
-                DataType = System.Type.GetType("System.String")
-            };
-            A.Columns.Add(Col);
+            string HTML_TABLES = "";
+            string Head = " <table width='100%'  border='1' cellspacing='0' cellpadding='0'> <tbody>@Content </tbody></table>";
+            string TableHead = @"<tr>
+                                    <th>N п.</th>
+                                    <th>ФИО</th>
+                                    <th>Должность</th>
+                                    <th>Почта</th>
+                                    <th>Номер телефона</th>
+                                 </tr>";
+            string TableRow = @"<tr><td>@number</td>
+                                    <td>@name</td>
+                                    <td>@title</td>
+                                    <td>@mail</td>
+                                    <td>@telephonenumber</td>
+                                </tr>";
+            //собераем данные в таблицу
+            string ContentBuffer = TableHead;
 
-            //mail
-            Col = new DataColumn()
+            string tmp = TableRow;
+            int RowList = 0;
+            foreach (DataRow R in Row)
             {
-                ColumnName = "Почта",
-                DataType = System.Type.GetType("System.String")
-            };
-            A.Columns.Add(Col);
-            
-            //telephonenumber
-            Col = new DataColumn()
-            {
-                ColumnName = "Номер телефона",
-                DataType = System.Type.GetType("System.String")
-            };
-            A.Columns.Add(Col);
-           
-           
-            
-            /*****************************************************************************/
-            //грузим данные **************************************************************
-            /*****************************************************************************/
-            foreach (DataRow R in Row) 
-            {
-                DataRow Myrow = A.NewRow();
-
-                Myrow["ФИО"] = Convert.ToString(R["name"]);
-                Myrow["Должность"] = Convert.ToString(R["title"]);
-                Myrow["Почта"] = "<a href=\"mailto:" + Convert.ToString(R["mail"]) + "\">" + Convert.ToString(R["mail"]) + "</a>";
-                Myrow["Номер телефона"] = Convert.ToString(R["telephonenumber"]);
-
-                A.Rows.Add(Myrow);
+                RowList++;
+                //создаем данные для записи
+                tmp = TableRow;
+                //заменяем теги на данные 
+                tmp = tmp.Replace("@number", Convert.ToString(RowList));
+               tmp= tmp.Replace("@name", Convert.ToString(R["name"]));
+               tmp = tmp.Replace("@title", Convert.ToString(R["title"]));
+               tmp = tmp.Replace("@mail", "<a href=\"mailto:" + Convert.ToString(R["mail"]) + "\">" + Convert.ToString(R["mail"]) + "</a>");
+               tmp = tmp.Replace("@telephonenumber", Convert.ToString(R["telephonenumber"]));
+                //сохраняем данные в буфер
+               ContentBuffer += tmp;
             }
+            //загружаем данные в таблицу
+            HTML_TABLES = Head.Replace("@Content", ContentBuffer);
 
-
-            /*****************************************************************************/
-            //грузим данные **************************************************************
-            /*****************************************************************************/
-            
-            return A;
+            return HTML_TABLES;
         }
         protected DataGrid MyGrid = new DataGrid();
-        protected void getAdInfo(string OfficeName) 
+        protected DataTable LoadData() 
         {
             //получение ифнормаци из файла настроек
             ConfigClass cfg = new ConfigClass();
@@ -97,7 +77,12 @@ namespace Info
             //указываем путь от куда брать данные 
             GetDB.PatchDir = FilePatch;
             //читсаем содержимое в таблицу
-            DataTable ReadAD = GetDB.LoadDataTablefromXML(FileName);
+            return GetDB.LoadDataTablefromXML(FileName);
+        }
+
+        protected void getAdInfo(string OfficeName) 
+        {
+            DataTable ReadAD = LoadData();
             if(ReadAD.Rows.Count>0)
             //проверяем смогли ли мы прочесть данные
             if (ReadAD != null) 
@@ -137,51 +122,136 @@ namespace Info
                         break;
                 }
                 
-                ReadAD = CreateTable(Result);
+              
 
-                Result = null;
-                //очищаем содержимое таблицы
-                MyGrid = new DataGrid();
-
-                //вешаем таблицу на страницу
-                DataView ShowDataInWeb = new DataView(ReadAD);
-
-                
-
-                //грузим всю гадость на страницу потом отсеим че не нада 
-                MyGrid.DataSource = ShowDataInWeb;
-                MyGrid.CssClass = "PhoneTable";
                
-                //загружаем данные в таблицу
-                MyGrid.DataBind();
-                this.Panel1.Controls.Clear();
-                this.Panel1.Controls.Add(MyGrid);
+
+                tableContent.InnerHtml = CreateTable(Result);
+                Result = null;
+             
             }
 
         }
 
-       
+        protected void SearchData() 
+        {
+            if (TextBox1.Text != "")
+            {
+
+                string Phone = "", FIO = "", TITLE = "", MAIL = "";
+                DataRow[] Result = null;
+                //загружаем таблицу с даннми
+                DataTable ReadAD = LoadData();
+                //собираем значение для поиска данных 
+                string Expression = "LIKE '%" + TextBox1.Text + "%'";
+                //пробуем найти данные
+                Result = ReadAD.Select(@"telephonenumber<>'' 
+                                                and telephonenumber<>'-' 
+                                                and  mail<>'' and " + "name " + Expression
+                                               , "name ASC"
+                                               );
+                
+                //собераем табличку по сотрудникам
+                if (Result.Length > 0) FIO = CreateTable(Result);   
+                //собераем табличку по должности 
+                Result = ReadAD.Select(@"telephonenumber<>'' 
+                                                and telephonenumber<>'-' 
+                                                and  mail<>'' and " + "title " + Expression
+                                              , "name ASC"
+                                              );
+                if (Result.Length > 0) TITLE = CreateTable(Result); 
+                //собераем таблчку по почте 
+                Result = ReadAD.Select(@"telephonenumber<>'' 
+                                                and telephonenumber<>'-' 
+                                                and  mail<>'' and " + "mail " + Expression
+                                              , "name ASC"
+                                              );
+                if (Result.Length > 0) MAIL = CreateTable(Result); 
+
+                //собераем таблицу по номеру телефона 
+                //собераем таблчку по почте 
+                Result = ReadAD.Select(@"telephonenumber<>'' 
+                                                and telephonenumber<>'-' 
+                                                and  mail<>'' and " + "telephonenumber " + Expression
+                                              , "name ASC"
+                                              );
+                if (Result.Length > 0) Phone = CreateTable(Result);
+                
+
+                tableContent.InnerHtml = FIO + TITLE + MAIL + Phone;
+            }
+            else 
+            {
+                //по умолчанию загружаем список всех людей 
+                getAdInfo("");
+            }
+
+        }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             //выполняем загрузку данных 1 раз при заходе на страницу
             if (!IsPostBack)
             {
+                ImageButton1.ImageUrl = "~/img/GO.png";
+                ImageButton2.ImageUrl = "~/img/DO1.png";
+                ImageButton3.ImageUrl = "~/img/ALL_on.png";
                 //по умолчанию загружаем список всех людей 
                 getAdInfo("");
             }
         }
 
-        protected void Button1_Click(object sender, EventArgs e)
+        //protected void Button1_Click(object sender, EventArgs e)
+        //{
+            
+        //}
+
+        //protected void Button2_Click(object sender, EventArgs e)
+        //{
+           
+        //}
+
+        //protected void Button4_Click(object sender, EventArgs e)
+        //{
+           
+        //    //по умолчанию загружаем список всех людей 
+        //    getAdInfo("");
+        //}
+
+        protected void Button3_Click(object sender, EventArgs e)
         {
+            ImageButton1.ImageUrl = "~/img/GO.png";
+            ImageButton2.ImageUrl = "~/img/DO1.png";
+            ImageButton3.ImageUrl = "~/img/ALL.png";
+            SearchData();
+        }
+
+        protected void ImageButton1_Click(object sender, ImageClickEventArgs e)
+        {
+            ImageButton1.ImageUrl = "~/img/GO_on.png";
+            ImageButton2.ImageUrl = "~/img/DO1.png";
+            ImageButton3.ImageUrl = "~/img/ALL.png";
+
             //оставляем только головной офис
             getAdInfo("Головной офис");
         }
 
-        protected void Button2_Click(object sender, EventArgs e)
+        protected void ImageButton2_Click(object sender, ImageClickEventArgs e)
         {
+            ImageButton1.ImageUrl = "~/img/GO.png";
+            ImageButton2.ImageUrl = "~/img/DO1_on.png";
+            ImageButton3.ImageUrl = "~/img/ALL.png";
             //оставляем только доп офис 
             getAdInfo("ДО Хорошевский");
+        }
+
+        protected void ImageButton3_Click(object sender, ImageClickEventArgs e)
+        {
+            ImageButton1.ImageUrl = "~/img/GO.png";
+            ImageButton2.ImageUrl = "~/img/DO1.png";
+            ImageButton3.ImageUrl = "~/img/ALL_on.png";
+            //по умолчанию загружаем список всех людей 
+            getAdInfo("");
         }
     }
 }

@@ -15,17 +15,19 @@
         <div >
             <table width="100%"  border="0" cellspacing="0" cellpadding="0">
                 <tbody>
-                       <tr>
+                       <tr >
                          <td align="left">
-                            <asp:Button ID="Button1" runat="server" Text="Головной офис" Width="150px" 
-                                 onclick="Button1_Click" />
-                            <asp:Button ID="Button2" runat="server" Text="ДО Хорошевский" Width="150px" 
-                                 onclick="Button2_Click" />
+                             <asp:ImageButton ID="ImageButton1" runat="server" BorderStyle="None" 
+                                 ImageAlign="Bottom" ImageUrl="~/img/GO.png" onclick="ImageButton1_Click" />
+                             <asp:ImageButton ID="ImageButton2" runat="server" ImageAlign="Bottom" 
+                                 ImageUrl="~/img/DO1.png" onclick="ImageButton2_Click" />
+                             <asp:ImageButton ID="ImageButton3" runat="server" ImageAlign="Bottom" 
+                                 ImageUrl="~/img/ALL.png" onclick="ImageButton3_Click" />
                          </td>
                          <td align= "right">
                             <asp:Label ID="Label1"  runat="server" Text="Поиск"></asp:Label>
                             <asp:TextBox ID="TextBox1" runat="server" Width=50%></asp:TextBox>
-                            <asp:Button ID="Button3" runat="server" Text="Искать" />
+                            <asp:Button ID="Button3" runat="server" Text="Искать" onclick="Button3_Click" />
                         </td>
                     </tr>
                 </tbody>
@@ -33,6 +35,7 @@
         </div>
         <div >
             <asp:Panel ID="Panel1" BackColor=White runat="server" Height="100%" Width="100%">
+                <div id="tableContent" runat="server"></div>
             </asp:Panel>
         </div>
     </form>
