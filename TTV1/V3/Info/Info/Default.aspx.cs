@@ -24,7 +24,7 @@ namespace Info
             string HTML_TABLES = "";
             string Head = " <table width='100%'  border='1' cellspacing='0' cellpadding='0'> <tbody>@Content </tbody></table>";
             string TableHead = @"<tr>
-                                    <th>N п.</th>
+                                    <th align='center' >N п.</th>
                                     <th>ФИО</th>
                                     <th>Должность</th>
                                     <th>Почта</th>
@@ -48,10 +48,10 @@ namespace Info
                 tmp = TableRow;
                 //заменяем теги на данные 
                 tmp = tmp.Replace("@number", Convert.ToString(RowList));
-               tmp= tmp.Replace("@name", Convert.ToString(R["name"]));
-               tmp = tmp.Replace("@title", Convert.ToString(R["title"]));
-               tmp = tmp.Replace("@mail", "<a href=\"mailto:" + Convert.ToString(R["mail"]) + "\">" + Convert.ToString(R["mail"]) + "</a>");
-               tmp = tmp.Replace("@telephonenumber", Convert.ToString(R["telephonenumber"]));
+                tmp= tmp.Replace("@name", Convert.ToString(R["name"]));
+                tmp = tmp.Replace("@title", Convert.ToString(R["title"]));
+                tmp = tmp.Replace("@mail", "<a href=\"mailto:" + Convert.ToString(R["mail"]) + "\">" + Convert.ToString(R["mail"]) + "</a>");
+                tmp = tmp.Replace("@telephonenumber", Convert.ToString(R["telephonenumber"]));
                 //сохраняем данные в буфер
                ContentBuffer += tmp;
             }
@@ -201,24 +201,7 @@ namespace Info
             }
         }
 
-        //protected void Button1_Click(object sender, EventArgs e)
-        //{
-            
-        //}
-
-        //protected void Button2_Click(object sender, EventArgs e)
-        //{
-           
-        //}
-
-        //protected void Button4_Click(object sender, EventArgs e)
-        //{
-           
-        //    //по умолчанию загружаем список всех людей 
-        //    getAdInfo("");
-        //}
-
-        protected void Button3_Click(object sender, EventArgs e)
+       protected void Button3_Click(object sender, EventArgs e)
         {
             ImageButton1.ImageUrl = "~/img/GO.png";
             ImageButton2.ImageUrl = "~/img/DO1.png";
