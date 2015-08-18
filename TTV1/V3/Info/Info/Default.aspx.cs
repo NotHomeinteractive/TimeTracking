@@ -83,10 +83,13 @@ namespace Info
         protected DataGrid MyGrid = new DataGrid();
         protected void getAdInfo(string OfficeName) 
         {
-            //путь до папки с дампом боевая
-            //string FilePatch = @"D:\www\bin";
+            //получение ифнормаци из файла настроек
+            ConfigClass cfg = new ConfigClass();
+            //задаем путь где лежат настройки 
+            cfg.DirPatchFile = @"c:\Windows\SysWOW64";
+            //получаем данные из файла 
             //разработка 
-            string FilePatch = @"d:\WWW";
+            string FilePatch = cfg.GetParam("ConfigFilePutch");
             //имя таблицы
             string FileName = "AD";
             //создаем объект чтения данных 

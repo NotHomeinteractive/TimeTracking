@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-16"?>
+<configFilds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Parametrs>
+    <NameParams>FilePutch</NameParams>
+    <ValueParams>D:\WWW</ValueParams>
+  </Parametrs>
+  <Parametrs>
+    <NameParams>Period_V_minutah</NameParams>
+    <ValueParams>1</ValueParams>
+  </Parametrs>
+  <Parametrs>
+    <NameParams>ConfigFilePutch</NameParams>
+    <ValueParams>D:\WWW</ValueParams>
+  </Parametrs>
+</configFilds>
