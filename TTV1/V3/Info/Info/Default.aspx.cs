@@ -60,7 +60,9 @@ namespace Info
 
             return HTML_TABLES;
         }
+        //глобальная переменная для хранения таблицы данных из AD
         protected DataGrid MyGrid = new DataGrid();
+        //функция загрузки данных из AD
         protected DataTable LoadData() 
         {
             //получение ифнормаци из файла настроек
@@ -200,7 +202,7 @@ namespace Info
                 getAdInfo("");
             }
         }
-
+        //все сотруднки
        protected void Button3_Click(object sender, EventArgs e)
         {
             ImageButton1.ImageUrl = "~/img/GO.png";
@@ -208,7 +210,7 @@ namespace Info
             ImageButton3.ImageUrl = "~/img/ALL.png";
             SearchData();
         }
-
+        //сотрудники центрального офиса
         protected void ImageButton1_Click(object sender, ImageClickEventArgs e)
         {
             ImageButton1.ImageUrl = "~/img/GO_on.png";
@@ -218,7 +220,7 @@ namespace Info
             //оставляем только головной офис
             getAdInfo("Головной офис");
         }
-
+        //сотрудники доп офиса
         protected void ImageButton2_Click(object sender, ImageClickEventArgs e)
         {
             ImageButton1.ImageUrl = "~/img/GO.png";

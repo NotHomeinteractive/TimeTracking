@@ -19,6 +19,7 @@ namespace XMLconfig
     public class configFilds
     {
         [XmlElement()]
+        //список параметров
         public List<Params> Parametrs = new List<Params>();
 
         public void DeleteParam(string NameParams)
@@ -75,6 +76,7 @@ namespace XMLconfig
         }
     }
 
+    //класс работы с параметрами
     public class ConfigClass
     {
         //путь сохранения файла настроек
@@ -112,6 +114,7 @@ namespace XMLconfig
             return Result;
         }
 
+        //получение значения на основе имени параметра 
         public string GetParam(string NameParams)
         {
             //перед добавлением проверим что там уже что то есть 
@@ -129,7 +132,7 @@ namespace XMLconfig
             return Result;
         }
 
-
+        //Добавление параметра 
         public void AddParam(string NameParams, string ValueParams)
         {
             //создаем структуру
@@ -145,19 +148,17 @@ namespace XMLconfig
                 int Index_ = MyParams.GetIndex(NameParams);
                 //переписываем параметр 
                 MyParams.Parametrs[Index_] = buf;
-
             }
             else
             {
                 //если параметра нет добавляем его к списку 
                 MyParams.Parametrs.Add(buf);
             }
-
-
             //сохраняем значение
             SaveParam();
         }
-
+        
+        //загрузка файла настроек
         void loadParam()
         {
             if (File.Exists(DirPatchFile + "\\" + ConfigFileName))
